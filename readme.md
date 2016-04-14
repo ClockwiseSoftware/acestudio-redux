@@ -2,6 +2,7 @@
 
 #### Something like Redux and Flux, without ES6
 Something like Redux, when we have one store for application, when data changing only copy of store and data changing by action
+##[DEMO](https://plnkr.co/IsxJ8g6u7S5cfYkYlsEH)
 
 ## Building Angular Acestudio Redux
 
@@ -14,12 +15,11 @@ Something like Redux, when we have one store for application, when data changing
 
 ###Set debug flag by provider for watch log messages in console
 ```javascript
-var app = angular.module('MyModule',['angular', 'acetudio-redux']);
+var app = angular.module('acereduxExample', ['acestudio-redux']);
 
-app.config(['$urlRouterProvider', 'acestudioReduxProvider', function($urlRouterProvider, acestudioReduxProvider){
+app.config(['acestudioReduxProvider', function(acestudioReduxProvider) {
 
-    acestudioReduxProvider.setDebug(true);
-     $urlRouterProvider.otherwise('/');
+  acestudioReduxProvider.setDebug(true);
 }]);
 ```
 
@@ -33,21 +33,22 @@ HeadController.$inject = ['$scope', 'aceredux'];
 
 function HeadController($scope, aceredux) {
 
-    var storeName = 'HeadOrRootStore';
+  var storeName = 'HeadOrRootStore';
 
-    var reducers = {
-        setPageTitle: 'pageTitle',
-        setPageDescription: 'pageDescription'
-    };
-     var markLikeRootStore = true;
+  var reducers = {
+    setPageTitle: 'pageTitle',
+    setPageDescription: 'pageDescription'
+  };
+  var markLikeRootStore = true;
 
-     $scope.store = {
-        mainProperty: 'this property you could get in some controller by ace.get("mainProperty", "HeadOrRootStore")'
-     };
+  $scope.store = {
+    mainProperty: 'this property you could get in some controller by ace.get("mainProperty", "HeadOrRootStore")'
+  };
 
   var ace = aceredux(storeName, reducers, $scope, markLikeRootStore);
 
 }
+
 
 ```
 
@@ -62,62 +63,96 @@ MyController.$inject = ['$scope', 'aceredux'];
 
 function MyController($scope, aceredux) {
 
-    $scope.store = {
-        age: 26,
-        sex: 'Male',
-        firstname: '',
-        lastname: '',
-        fullname: ''
-    };
+  $scope.store = {
+    age: 26,
+    sex: 'Male',
+    firstname: '',
+    lastname: '',
+    fullname: ''
+  };
 
-    var storeName = 'MyStore';
+  var storeName = 'MyStore';
 
-    var reducers = {
-        setFullname: 'fullname',
-        setFullname2: function(copyOfStore, newValue) {
-          copyOfStore.fullname = newValue;
-          return copyOfStore;
-        }
-    };
+  var reducers = {
+    setFullname: 'fullname',
+    setFullname2: function(copyOfStore, newValue) {
+      copyOfStore.fullname = newValue;
+      return copyOfStore;
+    }
+  };
 
   var ace = aceredux(storeName, reducers, $scope);
 
 
   $scope.makeFullname = function() {
-        ace.$d('setFullname', $scope.firstname + ' '+ $scope.lastname);
+    ace.$d('setFullname', $scope.store.firstname + ' ' + $scope.store.lastname);
   };
 
-   $scope.makeFullname2 = function() {
-        ace.$d('setFullname2', $scope.firstname + ' '+ $scope.lastname);
-   };
+  $scope.makeFullname2 = function() {
+    ace.$d('setFullname2', $scope.store.firstname + ' ' + $scope.store.lastname);
+  };
 
-   $scope.getSomePropertyFromSomeStore = function() {
-     alert(ace.get('mainProperty', 'HeadOrRootStore'));
-   };
+  $scope.getSomePropertyFromSomeStore = function() {
+    alert(ace.get('mainProperty', 'HeadOrRootStore'));
+  };
 
-   $scope.callReducerFromSomeStore = function() {
-     ace.$d('setPageTitle', 'I am RootController', 'HeadOrRootStore');
-   };
+  $scope.callReducerFromSomeStore = function() {
+    ace.$d('setPageTitle', 'I am RootController', 'HeadOrRootStore');
+  };
 
-    $scope.callUndefinedReducer = function() {
-        //call reducer which undefined in current store, then it will try call this reducer in rootStore.
-        ace.$d('setPageDescription', 'I am RootController description');
-    };
-     $scope.watchGlobalStore = function() {
-            //call reducer which undefined in current store, then it will try call this reducer in rootStore.
-       console.log(window.acestudioReduxGlobalStore);
-     }
+  $scope.callUndefinedReducer = function() {
+    //call reducer which undefined in current store, then it will try call this reducer in rootStore.
+    ace.$d('setPageDescription', 'I am RootController description');
+  };
+  $scope.watchGlobalStore = function() {
+    //call reducer which undefined in current store, then it will try call this reducer in rootStore.
+    $scope.globstore = JSON.stringify(window.acestudioReduxGlobalStore, null, '\t');
+  }
 }
 
 ```
 
+###Template
 ```html
-<input ng-model="store.firstname" type="text"> <br>
-<input ng-model="store.lastname" type="text"> <br>
-<button ng-click="makeFullname">make fullname and save in store</button>
-<button ng-click="makeFullname2">make fullname and save in store using reducer function declaration</button>
-<br><br>
-I am {{store.fullname}}, my age - {{store.age}}; Sex: {{store.sex}}
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link data-require="bootstrap-css@3.3.6" data-semver="3.3.6" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" />
+    <script data-require="lodash.js@4.6.1" data-semver="4.6.1" src="https://cdn.jsdelivr.net/lodash/4.6.1/lodash.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+   <script src="https://rawgit.com/ClockwiseSoftware/acestudio-redux/master/acestudio-redux.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+  </head>
+
+  <body ng-app="acereduxExample" ng-controller="HeadController">
+    <h1>Hello Angular Acestudio Redux!</h1>
+    MainProperty: {{store.mainProperty}} <br>
+    Title: {{store.pageTitle}} <br>
+    Desc: {{store.pageDescription}}
+    <div ng-controller="MyController">
+    <input class="form-control" placeholder="firstname" ng-model="store.firstname" type="text" />
+    <br/>
+    <input class="form-control" placeholder="lastname"  ng-model="store.lastname" type="text" />
+    <br/>
+    <button class="btn btn-success" ng-click="makeFullname()">make fullname and save in store</button>
+    <button class="btn btn-warning"  ng-click="makeFullname2()">make fullname and save in store using reducer function declaration</button>
+    <button class="btn btn-warning"  ng-click="callReducerFromSomeStore()">callReducerFromSomeStore</button>
+    <button class="btn btn-warning"  ng-click="callUndefinedReducer()">callUndefinedReducer</button>
+    <button class="btn btn-warning"  ng-click="watchGlobalStore()">watchGlobalStore</button>
+    <br/>
+    <br/>
+    I am {{store.fullname}}, my age - {{store.age}}  Sex: {{store.sex}}
+
+    GlobalStore: <br>
+   <pre> {{globstore}}</pre>
+  </div>
+
+  </body>
+
+</html>
+
 ```
 
 ## License
