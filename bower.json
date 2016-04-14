@@ -1,0 +1,27 @@
+{
+  "name": "acestudio-redux",
+  "version": "0.0.1",
+  "authors": [
+    "Oleg Sudavnyy <acestudiooleg@gmail.com>"
+  ],
+  "description": "Something like Redux, when we have one store for application, when data changing only copy of store and data changing by action",
+  "main": "acestudio-redux.js",
+  "moduleType": [],
+  "keywords": [
+    "angular",
+    "redux",
+    "flux",
+    "ng-redux",
+    "pub/sub",
+    "immutable"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "lodash": "^4.8.2"
+  },
+  "homepage": "https://github.com/ClockwiseSoftware/acestudio-redux"
+}
